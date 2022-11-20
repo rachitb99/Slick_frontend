@@ -16,6 +16,9 @@ function App() {
   const [prompt, setPrompt] = useState([null, null, null, null, null, null, null, null, null, null, null, null]);
   const [target, setTarget] = useState([null, null, null, null, null, null, null, null, null, null, null, null]);
   const [status, setStatus] = useState(null);
+  const [accessToken, setAccessToken] = useState(null);
+  const [username, setUsername] = useState(null);
+  const [password, setPassword] = useState(null);
 
   let imgRef = [useRef(), useRef(), useRef(), useRef(), useRef(), useRef(), useRef(), useRef(), useRef(), useRef(), useRef(), useRef()];
 
@@ -32,7 +35,16 @@ function App() {
         target: target[i],
       });
     }
-    await axios.post(process.env.REACT_APP_BACKEND, questions)
+    const config = {
+      method: 'post',
+      url: process.env.REACT_APP_BACKEND + '/questions',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      data: questions,
+    };
+    axios(config)
       .then((res) => {
         if(res.status === 201)setStatus('success');
         else setStatus('failed');
@@ -40,6 +52,18 @@ function App() {
       .catch(err => {
         setStatus('failed')
       });
+  }
+
+  async function signIn() {
+    await axios.post(process.env.REACT_APP_BACKEND + '/auth/admin/login', {
+      user_name: username,
+      password,
+    })
+      .then((res) => {
+        console.log(res);
+        if (res.status === 201) setAccessToken(res.data.access_token);
+      })
+      .catch(err => {});
   }
 
   const convertBase64 = (file) => {
@@ -55,8 +79,15 @@ function App() {
     });
   }
 
-  return (
-    <div>
+  return !accessToken ?
+  <div>
+    <h4>Admin username</h4>
+    <Form.Control type="text" onChange={e => {setUsername(e.target.value)}} required style={{ margin: '2rem' }} />
+    <h4>Admin password</h4>
+    <Form.Control type="text" onChange={e => {setPassword(e.target.value)}} required style={{ margin: '2rem' }} />
+    <Button style={{margin: '3rem'}} onClick={signIn}>Login</Button>
+  </div> :
+  <div>
       <SRow>
         {status ? <Alert variant={status === 'success' ? 'success' : 'danger'} type="submit" onClick={upload}>
           {status}
@@ -111,7 +142,6 @@ function App() {
         </Button>
       </SRow>
     </div>
-  );
 }
 
 export default App;
