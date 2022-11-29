@@ -4,8 +4,8 @@ import { useState, useRef } from "react";
 import styled from 'styled-components';
 import axios from 'axios';
 
-const emojis = ['😘', '😘', '🥰', '🥰', '🥰', '😐', '😐', '😐', '😐', '😐', '😐', '😐'];
-const genre = ['flirt', 'flirt', 'crush', 'crush', 'crush', 'general', 'general', 'general', 'general', 'general', 'general', 'general'];
+const emojis = ['😘', '😘', '🥰', '🥰', '😐', '😐', '😐', '😐', '😐', '😐', '😐', '😐'];
+const genre = ['flirt', 'flirt', 'crush', 'crush', 'general', 'general', 'general', 'general', 'general', 'general', 'general', 'general'];
 
 const SRow = styled(Row)`
   padding: 1rem;
