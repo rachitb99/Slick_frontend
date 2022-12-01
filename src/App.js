@@ -29,7 +29,7 @@ function App() {
       if (!prompt[i]) throw Error();
       if (!images[i] && !emoji[i]) throw Error();
       if (!target[i]) throw Error();
-      const image = null;
+      let image = null;
       if (images[i]) {
         image = await convertBase64(images[i]);
       }
