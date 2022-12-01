@@ -14,6 +14,7 @@ const SRow = styled(Row)`
 function App() {
   const [images, setImages] = useState([null, null, null, null, null, null, null, null, null, null, null, null]);
   const [prompt, setPrompt] = useState([null, null, null, null, null, null, null, null, null, null, null, null]);
+  const [emoji, setEmoji] = useState([null, null, null, null, null, null, null, null, null, null, null, null]);
   const [target, setTarget] = useState([null, null, null, null, null, null, null, null, null, null, null, null]);
   const [status, setStatus] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
@@ -25,11 +26,16 @@ function App() {
   async function upload() {
     const questions = [];
     for (let i=0; i< 12; i++ ) {
-      const base64 = await convertBase64(images[i]);
       if (!prompt[i]) throw Error();
+      if (!images[i] && !emoji[i]) throw Error();
       if (!target[i]) throw Error();
+      const image = null;
+      if (images[i]) {
+        image = await convertBase64(images[i]);
+      }
       questions.push({
-        image: base64,
+        image,
+        emoji: emoji[i],
         prompt: prompt[i],
         genre: genre[i],
         target: target[i],
@@ -111,7 +117,7 @@ function App() {
             setImages(temp);
             let src = URL.createObjectURL(e.target.files[0]);
             imgRef[element-1].current.src = src;
-          }} required/>
+          }}/>
         </Col>
         <Col>
           <Form.Select name="stock" id="stock" onChange={e => {
@@ -127,6 +133,11 @@ function App() {
           </Form.Select>
         </Col>
         <Col lg={6}>
+        <Form.Control type="text" onChange={e => {
+          let temp = emoji;
+          temp[element - 1] = e.target.value;
+          setEmoji(temp);
+        }}/>
         <Form.Control type="text" onChange={e => {
           let temp = prompt;
           temp[element - 1] = e.target.value;
